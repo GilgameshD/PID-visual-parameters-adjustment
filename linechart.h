@@ -10,24 +10,25 @@ class LineChart : public QQuickPaintedItem
 public:
     explicit LineChart(QQuickPaintedItem *parent = 0);
     void paint(QPainter *painter);
+
+    /***************************************************************/
     Q_PROPERTY(QColor color READ color WRITE setColor)
     QColor color() const;
     void setColor(const QColor &color);
-    Q_INVOKABLE void clearChart();
+    /**************************************************************/
+
+    Q_INVOKABLE void clearChart(); // join the qml
 
 signals:
     void chartCleared();
 
-public slots:
-
 private:
-    //QString m_name;
     QColor m_color;
     int monthCount;
     int nameWidth;
     int monthNow;
     int dayNow;
-    int topDistance;//上部距离
+    int topDistance;   // distance to the top of the picture
 
 };
 

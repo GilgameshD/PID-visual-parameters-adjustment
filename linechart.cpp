@@ -3,126 +3,112 @@
 #include <QDate>
 #include <QDebug>
 
-//                         1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26 27 28 29 30 31
-int traffic[31] = {700,300,600,622,644,800,723,777,500,800,766,728,234,245,222,678,443,778,235,900,923,618,845,98,128,300, 0, 0, 0, 0, 0};
+#define WIDTH 10               // the distance between two points
+#define ORIGINAL 300       // the x axis position
+#define DATA_COUNT 37
+//  record the data to be shown
+int traffic[37] = {700,-300,600,622,644,-800,723,777,500,800,-766,728,234,-245,222,
+                         678,443,778,-235,-900,923,-618,-845,98,128,300, 0, 0, 0, 100,100, 250,
+                         520 ,-510, 950, 840, 200};
 
-LineChart::LineChart(QQuickPaintedItem *parent) :
-    QQuickPaintedItem(parent)
+LineChart::LineChart(QQuickPaintedItem *parent) : QQuickPaintedItem(parent)
 {
-    //setFlag(QGraphicsItem::ItemHasNoContents, false);
     monthCount = 0;
     nameWidth = 0;
     monthNow = 0;
     topDistance =120;
 }
+
 void LineChart::paint(QPainter *painter)
 {
+    // get current date and time
     QDateTime current_date_time = QDateTime::currentDateTime();
-    painter->setRenderHint(QPainter::Antialiasing);//平滑直线
+    painter->setRenderHint(QPainter::Antialiasing);   // smooth line
     monthNow = current_date_time.date().month();
     dayNow = current_date_time.date().day();
-    if(monthNow == 2)
-    {
-        nameWidth=120*28+2;
-        monthCount = 28;
-    }
-    else if(monthNow == 1 || monthNow == 3 || monthNow==5 || monthNow==7
-             ||monthNow == 8 || monthNow ==10 || monthNow == 12)
-    {
-        nameWidth = 120 * 31 + 2;
-        monthCount = 31;
-    }
-    else
-    {
-        nameWidth = 120 * 30 + 2;
-        monthCount = 30;
-    }
-    int i = 0;
+
     int flag = 0;
-    for(;i < 31;i++)
-    {
+    for(int i = 0;i < DATA_COUNT;i++)
         if(flag < traffic[i])
-        {
-            flag=traffic[i];
-        }
-    }
-    painter->translate(0,530);    //设置原点位置
-    QPen penLine(Qt::white,3);
+            flag = traffic[i];
+
+    painter->translate(0, ORIGINAL);     // put the origin position, the y distance is 530
+    QPen penLine(Qt::white, 3);               // set the color and size of the line
     painter->setPen(penLine);
-    for (int var = 0; var < dayNow; ++var)
+
+    // draw lines and points
+    // the distance between points is defined as WIDTH
+    for (int var = 0; var < DATA_COUNT; ++var)
     {
-        if(var==0)
-        {
-            painter->drawLine(0,0,60,-traffic[var]*(530-topDistance)/flag);
-        }
+        if(var == 0)  // the first point
+            painter->drawLine(0,
+                                            0,
+                                            WIDTH,
+                                            -traffic[var]*(ORIGINAL-topDistance)/flag);
         else
-        {
-            painter->drawLine((60+(var-1)*120),-traffic[var-1]*(530-topDistance)/flag,120*var+60,-traffic[var]*(530-topDistance)/flag);
-        }
+            painter->drawLine((WIDTH + (var-1)*2*WIDTH),
+                                             -traffic[var-1]*(ORIGINAL-topDistance)/flag,
+                                             2*WIDTH*var+WIDTH,
+                                             -traffic[var]*(ORIGINAL-topDistance)/flag);
     }
 
-    for (int var = 0; var < dayNow; ++var) {
-        if(var==(dayNow-1)){
-            QPen Endpoint(Qt::white,10);
-            painter->setPen(Endpoint);
-            painter->drawEllipse((60+var*120)-5,(-traffic[var]*(530-topDistance)/flag)-5,10,10);//-5
-        }else{
-            painter->drawEllipse((60+var*120)-5,(-traffic[var]*(530-topDistance)/flag)-5,10,10);//-5
-        }
-    }
+    // draw the ellipse
+    for (int var = 0; var < DATA_COUNT; ++var)
+        painter->drawEllipse((WIDTH+var*2*WIDTH)-5, (-traffic[var]*(ORIGINAL-topDistance)/flag)-5, 10, 10);//-5
+
     QPen Vertical(Qt::white,1);
     painter->setPen(Vertical);
-    for (int var = 0; var < dayNow; ++var) {
-        painter->drawLine((60+var*120),0,(60+var*120),-traffic[var]*(530-topDistance)/flag+5);
-    }
-    QFont notToday("white",20);
-    painter->setFont(notToday);
-    for (int var = 0; var < dayNow; ++var) {
-        if(var==(dayNow-1)){
-            QFont isToday("white",30);
-            painter->setFont(isToday);
-            QString flagstr="";
-            painter->drawText((60+var*120-60),-traffic[var]*(530-topDistance)/flag-65,"TodayUsed");
-            flagstr = QString::number(traffic[var])+"MB";
-            if(traffic[var]>100){
-                painter->drawText((60+var*120-55),-traffic[var]*(530-topDistance)/flag-25,flagstr);
-            }else{
-                painter->drawText((60+var*120-35),-traffic[var]*(530-topDistance)/flag-25,flagstr);
-            }
-        }else{
-            QString flagstr="";
-            flagstr = QString::number(traffic[var])+"MB";
-            painter->drawText((60+var*120-45),-traffic[var]*(530-topDistance)/flag-25,flagstr);
-        }
-    }
 
+    // draw the verticle lines
+    for (int var = 0; var < DATA_COUNT; ++var)
+        painter->drawLine((WIDTH+var*2*WIDTH), 0, (WIDTH+var*2*WIDTH),-traffic[var]*(ORIGINAL-topDistance)/flag+5);
+
+    // paint the words on the picture
+    /**********************************************************************************************/
+    for (int var = 0; var < DATA_COUNT; ++var)
+    {
+        QFont isToday("white",10);
+        painter->setFont(isToday);
+        QString flagstr = "";
+        flagstr = QString::number(traffic[var]);
+        painter->drawText((WIDTH+var*2*WIDTH-35),-traffic[var]*(ORIGINAL-topDistance)/flag-25,flagstr);
+    }
+    /******************************************************************************************************/
+
+    // draw the shadow downside the line
+    /******************************************************************************************************/
     QColor insideBrushColor(255,255,255,25);
     QPen penpoints(insideBrushColor,0.15);
     painter->setPen(penpoints);
     painter->setBrush(insideBrushColor);
-    QPointF points[31];
-    points[0]=QPointF(0.0, 0.0);
-    for (int var = 1; var < dayNow+1; ++var) {
-            float x = (60+(var-1)*120);
-            float y = (-traffic[var-1]*(530-topDistance)/flag);
-            points[var]=QPointF(x, y);
+    QPointF points[DATA_COUNT];
+    points[0] = QPointF(0.0, 0.0);
+    for (int var = 1; var < DATA_COUNT; ++var)
+    {
+            float x = (WIDTH+(var-1)*2*WIDTH);
+            float y = (-traffic[var-1]*(ORIGINAL-topDistance)/flag);
+            points[var] = QPointF(x, y);
     }
-    points[dayNow+1]=QPointF(60+(dayNow-1)*120, 0.0);
-    painter->drawConvexPolygon(points,31);
-
+    points[DATA_COUNT-1]=QPointF(WIDTH+(DATA_COUNT)*2*WIDTH, 0.0);
+    painter->drawConvexPolygon(points, DATA_COUNT);
+    /******************************************************************************************************/
 }
+
 void LineChart::clearChart()
 {
-    qDebug()<<"======";
+    qDebug() << "========================================";
     setColor(QColor(Qt::transparent));
-    update();
+    update();   // update the picture
     emit chartCleared();
 }
+
+// return the color
 QColor LineChart::color() const
 {
     return m_color;
 }
 
+// set the color
 void LineChart::setColor(const QColor &color)
 {
     m_color = color;
