@@ -7,7 +7,8 @@ SOURCES += main.cpp \
     linechart.cpp \
     qextserialbase.cpp \
     qextserialport.cpp \
-    win_qextserialport.cpp
+    win_qextserialport.cpp \
+    communication.cpp
 
 RESOURCES += qml.qrc
 
@@ -21,5 +22,8 @@ HEADERS += \
     linechart.h \
     qextserialbase.h \
     qextserialport.h \
-    win_qextserialport.h
+    win_qextserialport.h \
+    communication.h
+
+FORMS +=
 

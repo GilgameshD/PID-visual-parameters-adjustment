@@ -3,9 +3,10 @@
 #include <QDate>
 #include <QDebug>
 
-#define WIDTH 10               // the distance between two points
+#define WIDTH 8               // the distance between two points
 #define ORIGINAL 300       // the x axis position
 #define DATA_COUNT 37
+
 //  record the data to be shown
 int traffic[37] = {700,-300,600,622,644,-800,723,777,500,800,-766,728,234,-245,222,
                          678,443,778,-235,-900,923,-618,-845,98,128,300, 0, 0, 0, 100,100, 250,
@@ -54,7 +55,7 @@ void LineChart::paint(QPainter *painter)
 
     // draw the ellipse
     for (int var = 0; var < DATA_COUNT; ++var)
-        painter->drawEllipse((WIDTH+var*2*WIDTH)-5, (-traffic[var]*(ORIGINAL-topDistance)/flag)-5, 10, 10);//-5
+        painter->drawEllipse((WIDTH+var*2*WIDTH)-2, (-traffic[var]*(ORIGINAL-topDistance)/flag)-2, 4, 4);//-5
 
     QPen Vertical(Qt::white,1);
     painter->setPen(Vertical);
