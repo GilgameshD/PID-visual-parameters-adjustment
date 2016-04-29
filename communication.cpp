@@ -8,11 +8,12 @@ Communication::Communication()
     com = new Win_QextSerialPort("COM4",QextSerialBase::EventDriven);
 }
 
-bool Communication::OpenPort()
+bool Communication::openPort()
 {
     isOpened = com->open(QIODevice::ReadWrite);
     if(isOpened)
     {
+        // some parameters , never mind~~
         com->setBaudRate(BAUD115200);
         com->setDataBits(DATA_8);
         com->setParity(PAR_NONE);
@@ -32,12 +33,13 @@ void Communication::sendData()
 			/* signal of ending */
 			data[31] = 0x0D;
 			data[32] = 0x0A;
-		
+
 			com->write(data,33);   //can't send unsigned char
     }
+    dataToBeShown = QString(QLatin1String(data));
 }
 
-void Communication::ReceiveData()
+void Communication::receiveData()
 {
     // init the data
     for(int i = 0;i < 3;++i)
