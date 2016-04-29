@@ -5,7 +5,7 @@ import QtQuick 2.0
 Rectangle
 {
     id: opacitytest;
-    width: 720; height: 530
+    width: 1000; height: 530
     color: "#edf0f0"
 
     property int monthNow: 0
@@ -16,7 +16,7 @@ Rectangle
 
     Component.onCompleted:
     {
-        nameWidth = 1000;   // define the width of the x axis
+        nameWidth = 700;   // define the width of the green background
     }
 
     // the block showing the chart
@@ -24,7 +24,6 @@ Rectangle
     {
         id: name
         anchors.top:pageHeader.bottom
-        x:todayLocation                                 // set the origin position
         color: "#009955"
         width: nameWidth; height: 530
 
@@ -37,6 +36,8 @@ Rectangle
             onChartCleared: console.log("The chart has been cleared")
         }
     }
+
+    // the title at  the top of the chart
     Text
     {
         anchors.top:name.top
@@ -47,16 +48,88 @@ Rectangle
         font.pointSize: 20;
     }
 
-    MouseArea
+    // the data area in the right of the chart
+    Rectangle
     {
-        anchors.fill: parent
-        drag.target: name
-        drag.axis: "XAxis"
-        drag.minimumX: -(nameWidth-720)
-        drag.maximumX: 0
-        onClicked:
+        id: dataAera
+        x:nameWidth
+        color : "#6666CC"
+        width : 1000 - nameWidth
+        height : 530
+
+        Text
         {
-            lineChart.clearChart()
+            anchors.top:dataAera.top
+            anchors.topMargin: 15
+            anchors.horizontalCenter: dataAera.horizontalCenter
+            text:qsTr("Data windows")
+            color: "#ffffff"
+            font.pointSize: 15;
         }
+        // update the data from the serial
+
+        // buttons
+        /****************************************************************************/
+        Rectangle
+        {
+             id: openPort
+             color: "grey"
+             width: 80; height: 50
+
+             // the position is based on its direct parent
+             x : 10; y : 460;
+             Text
+             {
+                 anchors.centerIn: openPort
+                 color: "#ffffff"
+                 text: qsTr("Open Port")
+                 font.pointSize: 10
+             }
+             MouseArea
+             {
+                 onClicked: {lineChart.clearChart()}
+             }
+         }
+        Rectangle
+        {
+             id: closePort
+             color: "grey"
+             width: 80; height: 50
+
+             // the position is based on its direct parent
+             x : 110; y : 460;
+             Text
+             {
+                 anchors.centerIn : closePort
+                 color : "#ffffff"
+                 text : qsTr("Close Port")
+                 font.pointSize : 10
+             }
+             MouseArea
+             {
+                 onClicked: {lineChart.clearChart()}
+             }
+         }
+        Rectangle
+        {
+             id: updateData
+             color: "grey"
+             width: 80; height: 50
+
+             // the position is based on its direct parent
+             x : 210; y : 460;
+             Text
+             {
+                 anchors.centerIn: updateData
+                 color: "#ffffff"
+                 text: qsTr("Update")
+                 font.pointSize: 10
+             }
+             MouseArea
+             {
+                 onClicked: {lineChart.clearChart()}
+             }
+         }
+        /******************************************************************************/
     }
 }
