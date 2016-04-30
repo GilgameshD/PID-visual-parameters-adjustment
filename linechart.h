@@ -3,6 +3,8 @@
 
 #include <QtQuick/QQuickPaintedItem>
 #include <QColor>
+#include <windows.h>
+#include <QTimer>
 
 class LineChart : public QQuickPaintedItem
 {
@@ -19,17 +21,25 @@ public:
 
     Q_INVOKABLE void clearChart(); // join the qml
 
+    /**************************************************************/
+    Q_INVOKABLE bool openComPort();
+    Q_INVOKABLE void pausePort();
+    Q_INVOKABLE void restartPort();
+
+    bool readComPort();
+    /**************************************************************/
 signals:
     void chartCleared();
 
-private:
-    QColor m_color;
-    int monthCount;
-    int nameWidth;
-    int monthNow;
-    int dayNow;
-    int topDistance;   // distance to the top of the picture
+private slots:
+    void onPortReceiveTimer();
 
+private:
+    HANDLE serialPort;  // Serial port HANDLE
+    QTimer *portReceiveTimer;
+
+    QColor m_color;
+    int topDistance;   // distance to the top of the picture
 };
 
 #endif // LINECHART_H

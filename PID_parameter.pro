@@ -4,11 +4,7 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    linechart.cpp \
-    qextserialbase.cpp \
-    qextserialport.cpp \
-    win_qextserialport.cpp \
-    communication.cpp
+    linechart.cpp
 
 RESOURCES += qml.qrc
 
@@ -19,11 +15,7 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    linechart.h \
-    qextserialbase.h \
-    qextserialport.h \
-    win_qextserialport.h \
-    communication.h
+    linechart.h
 
 FORMS +=
 

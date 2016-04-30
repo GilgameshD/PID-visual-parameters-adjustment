@@ -6,6 +6,10 @@ Communication::Communication()
 {
     // COM4
     com = new Win_QextSerialPort("COM4",QextSerialBase::EventDriven);
+
+    dataLength = 33;
+    data = new char[5];
+    data = "00000";
 }
 
 bool Communication::openPort()
@@ -36,7 +40,6 @@ void Communication::sendData()
 
 			com->write(data,33);   //can't send unsigned char
     }
-    dataToBeShown = QString(QLatin1String(data));
 }
 
 void Communication::receiveData()
@@ -57,6 +60,11 @@ void Communication::receiveData()
 			if (!(receive[1] == 0x0d && receive[2] == 0x0a))
 				return;
 	}
+}
+
+QString Communication::returnData()
+{
+    return QString((QLatin1String)data);
 }
 
 void Communication::stop()

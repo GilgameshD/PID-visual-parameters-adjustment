@@ -16,13 +16,13 @@ public:
     Q_INVOKABLE void sendData();
     Q_INVOKABLE void stop();
 
+      // the data received from the port and bind with qml to be shown
+    Q_INVOKABLE QString returnData();
+
 private:
     Win_QextSerialPort *com;
-
-    // the data received from the port and bind with qml to be shown
-    QString dataToBeShown;
-
-    char data[33];
+    int dataLength;  // the length of the data sended
+    char *data;
     char receive[3];
     bool isOpened;
 };

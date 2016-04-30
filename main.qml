@@ -1,5 +1,4 @@
 import LineCharts 1.0
-import Communication 1.0
 import QtQuick 2.0
 
 // the whole window
@@ -9,11 +8,27 @@ Rectangle
     width: 1000; height: 530
     color: "#edf0f0"
 
+    // be able to move the window
+    MouseArea
+    {
+        id: dragRegion
+        anchors.fill: parent
+        property point clickPos: "0,0"
+        onPressed:
+        {
+            clickPos = Qt.point(mouse.x,mouse.y)
+        }
+        onPositionChanged:
+        {
+            var delta = Qt.point(mouse.x-clickPos.x, mouse.y-clickPos.y)
+            mainwindow.setX(mainwindow.x+delta.x)
+            mainwindow.setY(mainwindow.y+delta.y)
+        }
+    }
+
     // define the width of the green background
     property int nameWidth: 700
-    property bool opened : true
-
-    Communication {id : communication}
+    property bool opened : false
 
     // the block showing the chart
     Rectangle
@@ -53,6 +68,8 @@ Rectangle
         width : 1000 - nameWidth
         height : 530
 
+        // the close button
+        // TODO
         Text
         {
             anchors.top:dataAera.top
@@ -62,6 +79,7 @@ Rectangle
             color: "#ffffff"
             font.pointSize: 15;
         }
+
         // update the data from the serial
         // we use many lines to update the data one by one
         // at begining, there are not so much data, so we disable some text line
@@ -75,7 +93,7 @@ Rectangle
 
             Text
             {
-                text : communication.dataToBeShown
+                //text : qsTr(communication.returnData())
                 font.weight: Font.Light
                 font.pointSize : 10
             }
@@ -183,17 +201,17 @@ Rectangle
                  anchors.fill: parent
                  onClicked:
                  {
-                    opened = communication.openPort();
-                     if(opened)
-                         console.log("===========  port opened successfully  ============;")
-                     else
-                         console.log("===========  port opened failed  ===========")
+                    opened = lineChart.openComPort();
+                    if(opened)
+                        console.log("==============================  port opened successfully  ===========================")
+                    else
+                        console.log("==============================  port opened failed  ===========================")
                  }
              }
          }
         Rectangle
         {
-             id: closePort
+             id: pause
              color: "grey"
              width: 80; height: 50
 
@@ -201,9 +219,9 @@ Rectangle
              x : 110; y : 460;
              Text
              {
-                 anchors.centerIn : closePort
+                 anchors.centerIn : pause
                  color : "#ffffff"
-                 text : qsTr("Close Port")
+                 text : qsTr("Pause")
                  font.pointSize : 10
              }
              MouseArea
@@ -211,14 +229,14 @@ Rectangle
                  anchors.fill: parent
                  onClicked:
                  {
-                     communication.stop();
-                     console.log("============  Port closed  ============")
+                     lineChart.pausePort();
+                     console.log("================================  Port paused  ==============================")
                  }
              }
          }
         Rectangle
         {
-             id: updateData
+             id: restart
              color: "grey"
              width: 80; height: 50
 
@@ -226,9 +244,9 @@ Rectangle
              x : 210; y : 460;
              Text
              {
-                 anchors.centerIn: updateData
+                 anchors.centerIn: restart
                  color: "#ffffff"
-                 text: qsTr("Update")
+                 text: qsTr("Restart")
                  font.pointSize: 10
              }
              MouseArea
@@ -236,8 +254,8 @@ Rectangle
                  anchors.fill: parent
                  onClicked:
                  {
-                     // TODO
-                     console.log("============  updating... ...  ===========")
+                     lineChart.restartPort();
+                     console.log("==============================  restart  ==============================")
                  }
              }
          }

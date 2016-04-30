@@ -2,6 +2,7 @@
 #include "communication.h"
 #include <QtQuick/QQuickView>
 #include <QGuiApplication>
+#include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
@@ -9,10 +10,13 @@ int main(int argc, char *argv[])
 
      // build a instance of the class LineChart and load the qml
     qmlRegisterType<LineChart>("LineCharts", 1, 0, "LineChart");
-    qmlRegisterType<Communication>("Communication", 1, 0, "Communication");
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
+
+    // hind the frame of the window and register the mainwindow to qml to drag the window
+    //view.setFlags(Qt::Window | Qt::FramelessWindowHint);
+    view.rootContext()->setContextProperty("mainwindow",&view);
     view.setSource(QUrl("qrc:/main.qml"));
     view.show();
     return app.exec();

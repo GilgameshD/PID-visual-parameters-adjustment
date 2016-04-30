@@ -3,9 +3,22 @@
 #include <QDate>
 #include <QDebug>
 
+/*********************************************************************************************/
+
+// PAINT STRATEGY:
+// The data will be received from the com port, so the chart will be update all the time
+// we will update the chart at the same time as we get a packet of data from the port
+// so the repaint process is done in the onTimer function.
+// when we arrive at the max point we will clear the chart and repaint from the fisrt point
+
+// 2016.4.29   Author : Wenhao Ding                                                   All rights Reserved
+/*********************************************************************************************/
+
+
 #define WIDTH 8               // the distance between two points
-#define ORIGINAL 300       // the x axis position
+#define ORIGINAL 300     // the x axis position
 #define DATA_COUNT 37
+#define receiveTime 600   // date receive time
 
 //  record the data to be shown
 int traffic[37] = {700,-300,600,622,644,-800,723,777,500,800,-766,728,234,-245,222,
@@ -14,19 +27,16 @@ int traffic[37] = {700,-300,600,622,644,-800,723,777,500,800,-766,728,234,-245,2
 
 LineChart::LineChart(QQuickPaintedItem *parent) : QQuickPaintedItem(parent)
 {
-    monthCount = 0;
-    nameWidth = 0;
-    monthNow = 0;
     topDistance =120;
+    portReceiveTimer = new QTimer;
+    portReceiveTimer->setInterval(receiveTime);
+
+    connect(portReceiveTimer, SIGNAL(timeout()), this, SLOT(onPortReceiveTimer()));
 }
 
 void LineChart::paint(QPainter *painter)
 {
-    // get current date and time
-    QDateTime current_date_time = QDateTime::currentDateTime();
     painter->setRenderHint(QPainter::Antialiasing);   // smooth line
-    monthNow = current_date_time.date().month();
-    dayNow = current_date_time.date().day();
 
     int flag = 0;
     for(int i = 0;i < DATA_COUNT;i++)
@@ -113,4 +123,65 @@ QColor LineChart::color() const
 void LineChart::setColor(const QColor &color)
 {
     m_color = color;
+}
+
+// read data from the port
+bool LineChart::readComPort()
+{
+    DWORD dwRead;
+    char m_pDataBuf[1000];
+    DWORD temp;
+    COMSTAT comstat;
+    bool flag = false;
+    // Get Serial states
+    ClearCommError(serialPort, &temp, &comstat);
+
+    // New bytes pending read or not
+    if (comstat.cbInQue > 0)
+    {
+        flag = ReadFile(serialPort, m_pDataBuf, comstat.cbInQue, &dwRead, NULL);
+        m_pDataBuf[dwRead] = 0;
+        qDebug() << m_pDataBuf << endl;
+    }
+    return flag;
+}
+
+// serialport operating
+bool LineChart::openComPort()
+{
+    wchar_t auxstr[10]  = {'C', 'O', 'M', '8'};
+    DCB dcb;
+    serialPort = CreateFile(auxstr, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+
+    if(!GetCommState(serialPort, &dcb))
+        return false;
+
+    // Serial port configuration
+    dcb.BaudRate = CBR_115200;
+    dcb.ByteSize = 8;
+    dcb.Parity = NOPARITY;
+    dcb.StopBits = ONESTOPBIT;
+    dcb.fDtrControl = DTR_CONTROL_DISABLE;
+
+    if (!SetCommState(serialPort, &dcb))
+        return false;
+
+    // start the timer and receive the data
+    portReceiveTimer->start();
+    return true;
+}
+
+void LineChart::onPortReceiveTimer()
+{
+    readComPort();
+}
+
+void LineChart::pausePort()
+{
+    portReceiveTimer->stop();
+}
+
+void LineChart::restartPort()
+{
+    portReceiveTimer->start();
 }
