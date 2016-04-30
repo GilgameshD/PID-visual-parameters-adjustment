@@ -44,7 +44,6 @@ Rectangle
             anchors.centerIn: parent
             width : nameWidth; height: 530
             color : "white"
-            onChartCleared: console.log("The chart has been cleared")
         }
     }
 
@@ -109,72 +108,6 @@ Rectangle
                 font.weight: Font.DemiBold
                 font.pointSize : 13
             }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Bold
-                font.pointSize : 13
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Black
-                font.pointSize : 13
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Black
-                font.pointSize : 13
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Black
-                font.pointSize : 13
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Black
-                font.pointSize : 13
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Normal
-                font.pointSize : 12
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Light
-                font.pointSize : 10
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Light
-                font.pointSize : 10
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Light
-                font.pointSize : 10
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Light
-                font.pointSize : 10
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.Light
-                font.pointSize : 10
-            }
         }
 
         /****************************************************************************/
@@ -201,7 +134,7 @@ Rectangle
                  anchors.fill: parent
                  onClicked:
                  {
-                    opened = lineChart.openComPort();
+                    opened = lineChart.startPort();
                     if(opened)
                         console.log("==============================  port opened successfully  ===========================")
                     else
@@ -229,7 +162,7 @@ Rectangle
                  anchors.fill: parent
                  onClicked:
                  {
-                     lineChart.pausePort();
+                     lineChart.stopPort();
                      console.log("================================  Port paused  ==============================")
                  }
              }

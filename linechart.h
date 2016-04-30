@@ -1,6 +1,7 @@
 #ifndef LINECHART_H
 #define LINECHART_H
 
+#include "comportthread.h"
 #include <QtQuick/QQuickPaintedItem>
 #include <QColor>
 #include <windows.h>
@@ -13,33 +14,25 @@ public:
     explicit LineChart(QQuickPaintedItem *parent = 0);
     void paint(QPainter *painter);
 
-    /***************************************************************/
     Q_PROPERTY(QColor color READ color WRITE setColor)
     QColor color() const;
     void setColor(const QColor &color);
-    /**************************************************************/
 
-    Q_INVOKABLE void clearChart(); // join the qml
+    Q_INVOKABLE bool startPort();
+    Q_INVOKABLE void stopPort(){ifShow = false;}
+    Q_INVOKABLE void restartPort(){ifShow = true;}
 
-    /**************************************************************/
-    Q_INVOKABLE bool openComPort();
-    Q_INVOKABLE void pausePort();
-    Q_INVOKABLE void restartPort();
-
-    bool readComPort();
-    /**************************************************************/
-signals:
-    void chartCleared();
+    // close work thread
+    void closeEvent(QCloseEvent *event);
 
 private slots:
-    void onPortReceiveTimer();
+    void onUpdate(){if(ifShow)update();}
 
 private:
-    HANDLE serialPort;  // Serial port HANDLE
-    QTimer *portReceiveTimer;
-
+    bool ifShow;       // when we push the pause button we dont repaint the chart
     QColor m_color;
     int topDistance;   // distance to the top of the picture
+    ComPortThread *comPortThread;
 };
 
 #endif // LINECHART_H

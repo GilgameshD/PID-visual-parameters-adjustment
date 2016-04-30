@@ -9,14 +9,8 @@ void setup()
 void loop() 
 {
   // put your main code here, to run repeatedly:
-  Serial.println("Max_acceleration_x: ");
+  Serial.print(-100);
   delay(100);
-  Serial.println("Max_acceleration_y: ");
-  delay(100);
-  Serial.println("Max speed X: ");
-  delay(100);
-  Serial.println("Max speed Y: ");
-  delay(100);
-  Serial.println("Moving to initial position...");
+  Serial.print(100);
   delay(100);
 }
