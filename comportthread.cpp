@@ -3,7 +3,7 @@
 
 #define MAX_NUMBER 90
 #define RECEIVE_TIME_INTERVAL 10   // date receive time
-#define MAX_MISSING                       1000
+#define MAX_MISSING      1000
 
 ComPortThread::ComPortThread()
 {
