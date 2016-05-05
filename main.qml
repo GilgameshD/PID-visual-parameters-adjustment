@@ -96,18 +96,6 @@ Rectangle
                 font.weight: Font.Light
                 font.pointSize : 10
             }
-            Text
-            {
-                text: "hello world hello world"
-                font.weight: Font.Normal
-                font.pointSize : 12
-            }
-            Text
-            {
-                text:"hello world hello world"
-                font.weight: Font.DemiBold
-                font.pointSize : 13
-            }
         }
 
         /****************************************************************************/
