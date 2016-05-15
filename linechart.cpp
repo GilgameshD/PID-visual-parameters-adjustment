@@ -21,7 +21,7 @@
 #include <QThread>
 
 
-#define WIDTH 4               // the distance between two points
+#define WIDTH 2               // the distance between two points
 #define ORIGINAL 300     // the x axis position
 
 LineChart::LineChart(QQuickPaintedItem *parent) : QQuickPaintedItem(parent)
@@ -41,8 +41,8 @@ void LineChart::paint(QPainter *painter)
 
     int flag = -1;
     for(int i = 0;i < comPortThread->currentNumber;i++)
-        if(flag < comPortThread->numberPoint[i])
-            flag = comPortThread->numberPoint[i];
+        if(flag < abs(comPortThread->numberPoint[i]))
+            flag = abs(comPortThread->numberPoint[i]);
 
     painter->translate(0, ORIGINAL);     // put the origin position, the y distance is 530
     QPen penLine(Qt::white, 2);               // set the color and size of the line

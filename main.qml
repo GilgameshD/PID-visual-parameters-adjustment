@@ -5,7 +5,7 @@ import QtQuick 2.0
 Rectangle
 {
     id: opacitytest;
-    width: 1000; height: 530
+    width: 1200; height: 530
     color: "#edf0f0"
 
     // be able to move the window
@@ -27,7 +27,7 @@ Rectangle
     }
 
     // define the width of the green background
-    property int nameWidth: 700
+    property int nameWidth: 1200
     property bool opened : false
 
     // the block showing the chart
@@ -57,47 +57,6 @@ Rectangle
         color : "#ffffff"
         font.pointSize : 20;
     }
-
-    // the data area in the right of the chart
-    Rectangle
-    {
-        id: dataAera
-        x:nameWidth
-        color : "#6666CC"
-        width : 1000 - nameWidth
-        height : 530
-
-        // the close button
-        // TODO
-        Text
-        {
-            anchors.top:dataAera.top
-            anchors.topMargin: 15
-            anchors.horizontalCenter: dataAera.horizontalCenter
-            text:qsTr("Data windows")
-            color: "#ffffff"
-            font.pointSize: 15;
-        }
-
-        // update the data from the serial
-        // we use many lines to update the data one by one
-        // at begining, there are not so much data, so we disable some text line
-        /****************************************************************************/
-        Column
-        {
-            anchors.topMargin: 50
-            anchors.top:parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 10
-
-            Text
-            {
-                //text : qsTr(communication.returnData())
-                font.weight: Font.Light
-                font.pointSize : 10
-            }
-        }
-
         /****************************************************************************/
 
         // buttons, includes openport, closeport and updatedata
@@ -109,7 +68,7 @@ Rectangle
              width: 80; height: 50
 
              // the position is based on its direct parent
-             x : 10; y : 460;
+             x : 900; y : 460;
              Text
              {
                  anchors.centerIn: openPort
@@ -137,7 +96,7 @@ Rectangle
              width: 80; height: 50
 
              // the position is based on its direct parent
-             x : 110; y : 460;
+             x : 1000; y : 460;
              Text
              {
                  anchors.centerIn : pause
@@ -151,7 +110,7 @@ Rectangle
                  onClicked:
                  {
                      lineChart.stopPort();
-                     console.log("================================  Port paused  ==============================")
+                     console.log("===================================  Port paused  =================================")
                  }
              }
          }
@@ -162,7 +121,7 @@ Rectangle
              width: 80; height: 50
 
              // the position is based on its direct parent
-             x : 210; y : 460;
+             x :1100; y : 460;
              Text
              {
                  anchors.centerIn: restart
@@ -181,5 +140,4 @@ Rectangle
              }
          }
         /******************************************************************************/
-    }
 }

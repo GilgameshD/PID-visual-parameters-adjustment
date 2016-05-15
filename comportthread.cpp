@@ -1,7 +1,7 @@
 #include "comportthread.h"
 #include <qdebug.h>
 
-#define MAX_NUMBER 90
+#define MAX_NUMBER 300
 #define RECEIVE_TIME_INTERVAL 10   // date receive time
 #define MAX_MISSING      1000
 
@@ -12,7 +12,7 @@ ComPortThread::ComPortThread()
     currentNumber = 1;
     numberPoint = new int[MAX_NUMBER];
     for(int i = 0;i < MAX_NUMBER;++i)
-        numberPoint[i] = 2;
+        numberPoint[i] = 10;
 }
 
 // read data from the port
@@ -46,8 +46,11 @@ bool ComPortThread::readComPort()
                 signSpeed = -motorSpeedDiffenerce;
            else
                 signSpeed = motorSpeedDiffenerce;
-           qDebug() << signSpeed <<  endl;
-           numberPoint[currentNumber-1] = signSpeed;
+           qDebug() << signSpeed <<  "   " << receive[2] << "   " << receive[3] << "   " << receive[4] << endl;
+           if(currentNumber == 1)
+                numberPoint[0] = 1;
+           else
+                numberPoint[currentNumber-1] = signSpeed;
            return true;
     }
     return false;
