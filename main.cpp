@@ -1,5 +1,4 @@
 #include "linechart.h"
-#include "communication.h"
 #include <QtQuick/QQuickView>
 #include <QGuiApplication>
 #include <QQmlContext>

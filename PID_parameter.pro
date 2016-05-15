@@ -5,7 +5,10 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     linechart.cpp \
-    comportthread.cpp
+    comportthread.cpp \
+    qextserialbase.cpp \
+    qextserialport.cpp \
+    win_qextserialport.cpp
 
 RESOURCES += qml.qrc
 
@@ -17,7 +20,10 @@ include(deployment.pri)
 
 HEADERS += \
     linechart.h \
-    comportthread.h
+    comportthread.h \
+    qextserialbase.h \
+    qextserialport.h \
+    win_qextserialport.h
 
 FORMS +=
 

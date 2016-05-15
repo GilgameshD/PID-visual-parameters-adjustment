@@ -3,7 +3,8 @@
 
 #include <qthread.h>
 #include <qtimer.h>
-#include "windows.h"
+#include "qextserialbase.h"
+#include "win_qextserialport.h"
 
 class ComPortThread : public QThread
 {
@@ -26,7 +27,8 @@ signals:
 
 private:
     volatile bool stopped;
-    HANDLE serialPort;  // Serial port HANDLE
+    Win_QextSerialPort *com;
+    char receive[5];
 };
 
 #endif // COMPORTTHREAD

@@ -1,10 +1,3 @@
-#include "linechart.h"
-#include <QPainter>
-#include <QDate>
-#include <QDebug>
-#include <stdlib.h>
-#include <QThread>
-
 /*********************************************************************************************/
 
 // PAINT STRATEGY:
@@ -19,6 +12,13 @@
 
 // 2016.4.29   Author : Wenhao Ding                                                   All Rights Reserved
 /*********************************************************************************************/
+
+#include "linechart.h"
+#include <QPainter>
+#include <QDate>
+#include <QDebug>
+#include <stdlib.h>
+#include <QThread>
 
 
 #define WIDTH 4               // the distance between two points

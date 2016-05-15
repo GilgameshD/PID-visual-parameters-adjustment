@@ -7,6 +7,7 @@
 
 ComPortThread::ComPortThread()
 {
+    com = new Win_QextSerialPort("COM3",QextSerialBase::EventDriven);
     stopped = false;
     currentNumber = 1;
     numberPoint = new int[MAX_NUMBER];
@@ -17,53 +18,60 @@ ComPortThread::ComPortThread()
 // read data from the port
 bool ComPortThread::readComPort()
 {
-    DWORD dwRead;
-    char m_pDataBuf[1000]; // receive buffer
-    DWORD temp;
-    COMSTAT comstat;
-    bool flag = false;
+    for(int i = 0;i < 5;++i)      //init data array
+            receive[i] = 0x00;
 
-    // Get Serial states
-    ClearCommError(serialPort, &temp, &comstat);
-
-    // New bytes pending read or not
-    if (comstat.cbInQue > 0)
+    char tmp;
+    if(opened)
     {
-        flag = ReadFile(serialPort, m_pDataBuf, comstat.cbInQue, &dwRead, NULL);
-        m_pDataBuf[dwRead] = 0;
+           while(!(receive[3] == 0x0d && receive[4] == 0x0a) && com->read(&tmp, 1))
+           {
+               receive[0] = receive[1];
+               receive[1] = receive[2];
+               receive[2] = receive[3];
+               receive[3] = receive[4];
+               receive[4] = tmp;
+           }
 
-        qDebug() << m_pDataBuf;
-        int tmp = atoi(m_pDataBuf);
-        if(abs(tmp) < MAX_MISSING)
-            numberPoint[currentNumber-1] = tmp;
-        else
-            return false;
+           if (!(receive[3] == 0x0d && receive[4] == 0x0a))
+               return false;
+
+           unsigned int differenceMotor = 0;
+           differenceMotor = receive[0];
+           differenceMotor = (differenceMotor << 8) | receive[1];
+
+           int motorSpeedDiffenerce = differenceMotor;
+           int signSpeed;
+           if(receive[2] == 0x00)
+                signSpeed = -motorSpeedDiffenerce;
+           else
+                signSpeed = motorSpeedDiffenerce;
+           qDebug() << signSpeed <<  endl;
+           numberPoint[currentNumber-1] = signSpeed;
+           return true;
     }
-    return flag;
+    return false;
 }
 
 // serialport operating
 bool ComPortThread::openComPort()
 {
-    wchar_t auxstr[10]  = {'C', 'O', 'M', '8'};
-    DCB dcb;
-    serialPort = CreateFile(auxstr, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-
-    if(!GetCommState(serialPort, &dcb))
-        return false;
-
-    // Serial port configuration
-    dcb.BaudRate = CBR_115200;
-    dcb.ByteSize = 8;
-    dcb.Parity = NOPARITY;
-    dcb.StopBits = ONESTOPBIT;
-    dcb.fDtrControl = DTR_CONTROL_DISABLE;
-
-    if (!SetCommState(serialPort, &dcb))
-        return false;
-    return true;
+     bool isOpened = com->open(QIODevice::ReadWrite);// double port
+        if(isOpened)                               // check if open successfully
+        {
+            com->setBaudRate(BAUD115200);          // BAUD 115200
+            com->setDataBits(DATA_8);                     // data bits 8
+            com->setParity(PAR_NONE);                   // check bit  no
+            com->setStopBits(STOP_1);                    // stop bit  1
+            com->setFlowControl(FLOW_OFF);        // data stream
+            com->setTimeout(500);                             // delay 500ms
+            return isOpened;
+        }
+        else
+            return isOpened;
 }
 
+// run a new thread
 void ComPortThread::run()
 {
     opened = openComPort();
@@ -82,10 +90,3 @@ void ComPortThread::run()
         msleep(20);
     }
 }
-
-
-
-
-
-
-
