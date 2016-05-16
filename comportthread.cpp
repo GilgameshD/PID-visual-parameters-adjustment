@@ -7,7 +7,7 @@
 
 ComPortThread::ComPortThread()
 {
-    com = new Win_QextSerialPort("COM3",QextSerialBase::EventDriven);
+    com = new Win_QextSerialPort("COM8",QextSerialBase::EventDriven);
     stopped = false;
     currentNumber = 1;
     numberPoint = new int[MAX_NUMBER];
@@ -47,10 +47,15 @@ bool ComPortThread::readComPort()
            else
                 signSpeed = motorSpeedDiffenerce;
            qDebug() << signSpeed <<  "   " << receive[2] << "   " << receive[3] << "   " << receive[4] << endl;
+
+           // lock this varaiable to avoid other thread's visiting
+           mutex.lock();
            if(currentNumber == 1)
                 numberPoint[0] = 1;
            else
                 numberPoint[currentNumber-1] = signSpeed;
+           mutex.unlock();
+           // lock finished
            return true;
     }
     return false;
@@ -59,8 +64,8 @@ bool ComPortThread::readComPort()
 // serialport operating
 bool ComPortThread::openComPort()
 {
-     bool isOpened = com->open(QIODevice::ReadWrite);// double port
-        if(isOpened)                               // check if open successfully
+      opened = com->open(QIODevice::ReadWrite);// double port
+        if(opened)                               // check if open successfully
         {
             com->setBaudRate(BAUD115200);          // BAUD 115200
             com->setDataBits(DATA_8);                     // data bits 8
@@ -68,10 +73,10 @@ bool ComPortThread::openComPort()
             com->setStopBits(STOP_1);                    // stop bit  1
             com->setFlowControl(FLOW_OFF);        // data stream
             com->setTimeout(500);                             // delay 500ms
-            return isOpened;
+            return opened;
         }
         else
-            return isOpened;
+            return opened;
 }
 
 // run a new thread
@@ -80,6 +85,7 @@ void ComPortThread::run()
     opened = openComPort();
     while(!stopped)
     {
+        // only receive successfully, we can repaint the chart
         int flag = readComPort();
 
         // repaint the chart and update the current number

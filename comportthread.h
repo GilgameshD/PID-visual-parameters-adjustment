@@ -18,6 +18,7 @@ public:
     int *numberPoint;
     int currentNumber;
     bool opened;   // record if the port is opened
+    QMutex mutex;
 
     // thread opening
     void run();

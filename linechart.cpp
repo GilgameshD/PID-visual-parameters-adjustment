@@ -37,12 +37,19 @@ LineChart::LineChart(QQuickPaintedItem *parent) : QQuickPaintedItem(parent)
 // paint the chart every time the update called
 void LineChart::paint(QPainter *painter)
 {
+    comPortThread->mutex.lock();
+    int copyCurrentNumber = comPortThread->currentNumber;
+    int *copyArray = new int[copyCurrentNumber];
+    for(int i = 0;i < copyCurrentNumber;++i)
+        copyArray[i] = comPortThread->numberPoint[i];
+   comPortThread->mutex.unlock();
+
     painter->setRenderHint(QPainter::Antialiasing);   // smooth line
 
     int flag = -1;
-    for(int i = 0;i < comPortThread->currentNumber;i++)
-        if(flag < abs(comPortThread->numberPoint[i]))
-            flag = abs(comPortThread->numberPoint[i]);
+    for(int i = 0;i < copyCurrentNumber;i++)
+        if(flag < abs(copyArray[i]))
+            flag = abs(copyArray[i]);
 
     painter->translate(0, ORIGINAL);     // put the origin position, the y distance is 530
     QPen penLine(Qt::white, 2);               // set the color and size of the line
@@ -50,24 +57,24 @@ void LineChart::paint(QPainter *painter)
 
     // draw lines and points
     // the distance between points is defined as WIDTH
-    for (int var = 0; var < comPortThread->currentNumber; ++var)
+    for (int var = 0; var < copyCurrentNumber; ++var)
     {
         if(var == 0)  // the first point
             painter->drawLine(0,
                                             0,
                                             WIDTH,
-                                            -comPortThread->numberPoint[var]*(ORIGINAL-topDistance)/flag);
+                                            -copyArray[var]*(ORIGINAL-topDistance)/flag);
         else
             painter->drawLine((WIDTH + (var-1)*2*WIDTH),
-                                             -comPortThread->numberPoint[var-1]*(ORIGINAL-topDistance)/flag,
+                                             -copyArray[var-1]*(ORIGINAL-topDistance)/flag,
                                              2*WIDTH*var+WIDTH,
-                                             -comPortThread->numberPoint[var]*(ORIGINAL-topDistance)/flag);
+                                             -copyArray[var]*(ORIGINAL-topDistance)/flag);
     }
 
     // draw the ellipse
-    for (int var = 0; var < comPortThread->currentNumber; ++var)
+    for (int var = 0; var < copyCurrentNumber; ++var)
         painter->drawEllipse((WIDTH+var*2*WIDTH)-1,
-                                            (-comPortThread->numberPoint[var]*(ORIGINAL-topDistance)/flag)-1,
+                                            (-copyArray[var]*(ORIGINAL-topDistance)/flag)-1,
                                             2,
                                             2);
 
@@ -75,23 +82,23 @@ void LineChart::paint(QPainter *painter)
     painter->setPen(Vertical);
 
     // draw the verticle lines
-    for (int var = 0; var < comPortThread->currentNumber; ++var)
+    for (int var = 0; var < copyCurrentNumber; ++var)
         painter->drawLine((WIDTH+var*2*WIDTH),
                                         0,
                                         (WIDTH+var*2*WIDTH),
-                                        -comPortThread->numberPoint[var]*(ORIGINAL-topDistance)/flag+5);
+                                        -copyArray[var]*(ORIGINAL-topDistance)/flag+5);
 
     // paint the words on the picture
-    for (int var = 0; var < comPortThread->currentNumber; ++var)
+    for (int var = 0; var < copyCurrentNumber; ++var)
     {
         QFont isToday("white",10);
         painter->setFont(isToday);
         QString flagstr = "";
-        flagstr = QString::number(comPortThread->numberPoint[var]);
-        if(comPortThread->numberPoint[var] > 0)
-            painter->drawText((WIDTH+var*2*WIDTH-35),-comPortThread->numberPoint[var]*(ORIGINAL-topDistance)/flag-25,flagstr);
+        flagstr = QString::number(copyArray[var]);
+        if(copyArray[var] > 0)
+            painter->drawText((WIDTH+var*2*WIDTH-35),-copyArray[var]*(ORIGINAL-topDistance)/flag-25,flagstr);
         else
-            painter->drawText((WIDTH+var*2*WIDTH+35),-comPortThread->numberPoint[var]*(ORIGINAL-topDistance)/flag+25,flagstr);
+            painter->drawText((WIDTH+var*2*WIDTH+35),-copyArray[var]*(ORIGINAL-topDistance)/flag+25,flagstr);
     }
 
     // draw the shadow downside the line
@@ -99,16 +106,16 @@ void LineChart::paint(QPainter *painter)
     QPen penpoints(insideBrushColor,0.15);
     painter->setPen(penpoints);
     painter->setBrush(insideBrushColor);
-    QPointF *points = new QPointF[comPortThread->currentNumber];
+    QPointF *points = new QPointF[copyCurrentNumber];
     points[0] = QPointF(0.0, 0.0);
-    for (int var = 1; var < comPortThread->currentNumber; ++var)
+    for (int var = 1; var < copyCurrentNumber; ++var)
     {
             float x = (WIDTH+(var-1)*2*WIDTH);
-            float y = (-comPortThread->numberPoint[var-1]*(ORIGINAL-topDistance)/flag);
+            float y = (-copyArray[var-1]*(ORIGINAL-topDistance)/flag);
             points[var] = QPointF(x, y);
     }
-    points[comPortThread->currentNumber-1]=QPointF(WIDTH+(comPortThread->currentNumber)*2*WIDTH, 0.0);
-    painter->drawConvexPolygon(points, comPortThread->currentNumber);
+    points[copyCurrentNumber-1]=QPointF(WIDTH+(copyCurrentNumber)*2*WIDTH, 0.0);
+    painter->drawConvexPolygon(points, copyCurrentNumber);
 }
 
 // return the color
