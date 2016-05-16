@@ -40,8 +40,10 @@ void LineChart::paint(QPainter *painter)
     comPortThread->mutex.lock();
     int copyCurrentNumber = comPortThread->currentNumber;
     int *copyArray = new int[copyCurrentNumber];
+
     for(int i = 0;i < copyCurrentNumber;++i)
         copyArray[i] = comPortThread->numberPoint[i];
+
    comPortThread->mutex.unlock();
 
     painter->setRenderHint(QPainter::Antialiasing);   // smooth line

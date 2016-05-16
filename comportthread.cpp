@@ -7,12 +7,14 @@
 
 ComPortThread::ComPortThread()
 {
-    com = new Win_QextSerialPort("COM8",QextSerialBase::EventDriven);
+    com = new Win_QextSerialPort("COM3",QextSerialBase::EventDriven);
     stopped = false;
     currentNumber = 1;
     numberPoint = new int[MAX_NUMBER];
     for(int i = 0;i < MAX_NUMBER;++i)
         numberPoint[i] = 10;
+
+    receive = new char[5];
 }
 
 // read data from the port
@@ -21,17 +23,20 @@ bool ComPortThread::readComPort()
     for(int i = 0;i < 5;++i)      //init data array
             receive[i] = 0x00;
 
-    char tmp;
+    char* temp = new char;
+    bool flag = false;
+    int t;
     if(opened)
     {
-           while(!(receive[3] == 0x0d && receive[4] == 0x0a) && com->read(&tmp, 1))
-           {
-               receive[0] = receive[1];
-               receive[1] = receive[2];
-               receive[2] = receive[3];
-               receive[3] = receive[4];
-               receive[4] = tmp;
-           }
+            while(!flag && (t =  com->read(temp, 1)))
+            {
+                if(temp[0] == 0x0a)
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            com->read(receive, 5);
 
            if (!(receive[3] == 0x0d && receive[4] == 0x0a))
                return false;
@@ -46,7 +51,7 @@ bool ComPortThread::readComPort()
                 signSpeed = -motorSpeedDiffenerce;
            else
                 signSpeed = motorSpeedDiffenerce;
-           qDebug() << signSpeed <<  "   " << receive[2] << "   " << receive[3] << "   " << receive[4] << endl;
+           //qDebug() << signSpeed << endl;
 
            // lock this varaiable to avoid other thread's visiting
            mutex.lock();
@@ -92,10 +97,10 @@ void ComPortThread::run()
         if(flag)
         {
             currentNumber++;
+            if(currentNumber == MAX_NUMBER)
+                currentNumber = 1;
             emit dataUpdated();
         }
-        if(currentNumber == MAX_NUMBER)
-            currentNumber = 1;
-        msleep(20);
+        usleep(10);
     }
 }

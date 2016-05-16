@@ -29,7 +29,7 @@ signals:
 private:
     volatile bool stopped;
     Win_QextSerialPort *com;
-    char receive[5];
+    char *receive;
 };
 
 #endif // COMPORTTHREAD
