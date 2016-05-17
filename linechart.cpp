@@ -6,7 +6,7 @@
 // so the repaint process is done in the onTimer function.
 // when we arrive at the max point we will clear the chart and repaint from the fisrt point
 
-// UPDATE UI (PALN A)
+// UPDATE UI
 // at the beginning, we update the ui in the onTimer of port, but this will delay the timer,
 // so we build a new thread to receive the data from com port
 

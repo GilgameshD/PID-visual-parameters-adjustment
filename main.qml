@@ -13,7 +13,21 @@ Item
     // draw shadow
     DropShadow
     {
-            id: rectShadow
+            id: rectShadow1
+            anchors.fill: source
+            cached: true
+            horizontalOffset: -3
+            verticalOffset: -3
+            radius: 7
+            samples: 10
+            color: "#80000000"
+            smooth: true
+            source: name
+    }
+    // draw shadow
+    DropShadow
+    {
+            id: rectShadow2
             anchors.fill: source
             cached: true
             horizontalOffset: 3
@@ -51,7 +65,8 @@ Item
     Rectangle
     {
         id: name
-        anchors.top:parent.top
+        //anchors.top:parent.top
+        x : 3; y : 3
         color: "#009955"
         width: nameWidth; height: 530
         radius : 10
@@ -187,7 +202,7 @@ Item
     // minimized button
     Rectangle
     {
-         x: 1100; y: -10;
+         x: 1100; y: 10;
          width : 40; height : 30
          color : "yellow"
          radius: width/2;
@@ -203,7 +218,7 @@ Item
     // close button
     Rectangle
     {
-         x: 1150; y: -10;
+         x: 1150; y: 10;
          width : 40; height : 30;
          color : "red"
          radius: width/2;
