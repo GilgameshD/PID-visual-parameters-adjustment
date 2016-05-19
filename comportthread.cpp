@@ -7,7 +7,7 @@
 
 ComPortThread::ComPortThread()
 {
-    com = new Win_QextSerialPort("COM3",QextSerialBase::EventDriven);
+    com = new Win_QextSerialPort("COM5",QextSerialBase::EventDriven);
     stopped = false;
     currentNumber = 1;
     numberPoint = new int[MAX_NUMBER];
@@ -101,6 +101,6 @@ void ComPortThread::run()
                 currentNumber = 1;
             emit dataUpdated();
         }
-        usleep(10);
+        usleep(5);
     }
 }

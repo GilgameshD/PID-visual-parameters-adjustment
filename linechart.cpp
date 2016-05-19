@@ -93,14 +93,17 @@ void LineChart::paint(QPainter *painter)
     // paint the words on the picture
     for (int var = 0; var < copyCurrentNumber; ++var)
     {
+        if(var%6 == 0)
+        {
         QFont isToday("white",10);
         painter->setFont(isToday);
         QString flagstr = "";
         flagstr = QString::number(copyArray[var]);
         if(copyArray[var] > 0)
-            painter->drawText((WIDTH+var*2*WIDTH-35),-copyArray[var]*(ORIGINAL-topDistance)/flag-25,flagstr);
+            painter->drawText((WIDTH+var*2*WIDTH),-copyArray[var]*(ORIGINAL-topDistance)/flag-25, flagstr);
         else
-            painter->drawText((WIDTH+var*2*WIDTH+35),-copyArray[var]*(ORIGINAL-topDistance)/flag+25,flagstr);
+            painter->drawText((WIDTH+var*2*WIDTH),-copyArray[var]*(ORIGINAL-topDistance)/flag+25,flagstr);
+        }
     }
 
     // draw the shadow downside the line
