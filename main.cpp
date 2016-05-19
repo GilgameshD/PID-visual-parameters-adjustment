@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     view.setFlags(Qt::Window | Qt::FramelessWindowHint);
     view.rootContext()->setContextProperty("mainwindow",&view);
     view.setSource(QUrl("qrc:/main.qml"));
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.show();
     return app.exec();
 }

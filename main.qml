@@ -60,15 +60,26 @@ Item
     // define the width of the green background
     property int nameWidth: 1200
     property bool opened : false
+    property bool fullScreen : false;
 
     // the block showing the chart
     Rectangle
     {
-        id: name
+        id: background
+        anchors.fill: parent
         //anchors.top:parent.top
         x : 3; y : 3
         color: "#009955"
         width: nameWidth; height: 530
+        radius : 10
+    }
+
+    Rectangle
+    {
+        id: name
+        x : 3+4; y : 3+70
+        color: "#333333"
+        width: nameWidth-8; height: 530-70-3
         radius : 10
 
         LineChart
@@ -83,7 +94,7 @@ Item
     // the title at  the top of the chart
     Text
     {
-        anchors.top : name.top
+        anchors.top : background.top
         anchors.topMargin : 20
         anchors.horizontalCenter : parent.horizontalCenter
         text:qsTr("PID parameters setting")
@@ -202,7 +213,7 @@ Item
     // minimized button
     Rectangle
     {
-         x: 1100; y: 10;
+         x: 1050; y: 20;
          width : 40; height : 30
          color : "yellow"
          radius: width/2;
@@ -215,10 +226,38 @@ Item
              onClicked : {mainwindow.showMinimized()}
          }
      }
+    // maxizized button
+    Rectangle
+    {
+         x: 1100; y: 20;
+         width : 40; height : 30;
+         color : "#9932cc"
+         radius: width/2;
+         MouseArea
+         {
+             anchors.fill: parent
+             hoverEnabled: true
+             onEntered :  {parent.color = "#ff6666";}
+             onExited : {parent.color = "#9932cc"}
+             onClicked :
+             {
+                 if(!fullScreen)
+                 {
+                    mainwindow.showFullScreen();
+                    fullScreen = true;
+                 }
+                 else
+                 {
+                     mainwindow.showNormal();
+                     fullScreen = false;
+                 }
+             }
+         }
+     }
     // close button
     Rectangle
     {
-         x: 1150; y: 10;
+         x: 1150; y: 20;
          width : 40; height : 30;
          color : "red"
          radius: width/2;
