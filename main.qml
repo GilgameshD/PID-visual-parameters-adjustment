@@ -77,9 +77,9 @@ Item
     Rectangle
     {
         id: name
-        x : 3+4; y : 3+70
+        x : 3; y : 3+45
         color: "#333333"
-        width: nameWidth-8; height: 530-70-3
+        width: nameWidth; height: 530-45
         radius : 10
 
         LineChart
@@ -95,11 +95,11 @@ Item
     Text
     {
         anchors.top : background.top
-        anchors.topMargin : 20
+        anchors.topMargin : 15
         anchors.horizontalCenter : parent.horizontalCenter
         text:qsTr("PID parameters setting")
         color : "#ffffff"
-        font.pointSize : 20;
+        font.pointSize : 15;
     }
 
     // buttons, includes openport, closeport and updatedata
@@ -213,8 +213,8 @@ Item
     // minimized button
     Rectangle
     {
-         x: 1050; y: 20;
-         width : 40; height : 30
+         x: 1100-3; y: 13;
+         width : 30; height : 20
          color : "yellow"
          radius: width/2;
          MouseArea
@@ -229,8 +229,8 @@ Item
     // maxizized button
     Rectangle
     {
-         x: 1100; y: 20;
-         width : 40; height : 30;
+         x: 1135-3; y: 13;
+         width : 30; height : 20;
          color : "#9932cc"
          radius: width/2;
          MouseArea
@@ -257,8 +257,8 @@ Item
     // close button
     Rectangle
     {
-         x: 1150; y: 20;
-         width : 40; height : 30;
+         x: 1170-3; y: 13;
+         width : 30; height : 20;
          color : "red"
          radius: width/2;
          MouseArea

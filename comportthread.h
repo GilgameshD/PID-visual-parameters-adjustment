@@ -6,7 +6,6 @@
 #include "qextserialbase.h"
 #include "win_qextserialport.h"
 
-
 class ComPortThread : public QThread
 {
     Q_OBJECT
