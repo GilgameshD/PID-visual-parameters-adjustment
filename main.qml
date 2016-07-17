@@ -69,7 +69,7 @@ Item
         anchors.fill: parent
         //anchors.top:parent.top
         x : 3; y : 3
-        color: "#009955"
+        color: "#ffa400"
         width: nameWidth; height: 530
         radius : 10
     }
@@ -231,14 +231,14 @@ Item
     {
          x: 1135-3; y: 13;
          width : 30; height : 20;
-         color : "#9932cc"
+         color : "#00e500"
          radius: width/2;
          MouseArea
          {
              anchors.fill: parent
              hoverEnabled: true
              onEntered :  {parent.color = "#ff6666";}
-             onExited : {parent.color = "#9932cc"}
+             onExited : {parent.color = "#00e500"}
              onClicked :
              {
                  if(!fullScreen)

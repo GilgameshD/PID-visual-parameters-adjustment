@@ -21,8 +21,8 @@
 #include <QThread>
 
 
-#define WIDTH 2               // the distance between two points
-#define ORIGINAL 300     // the x axis position
+#define WIDTH 1               // the distance between two points
+#define ORIGINAL 280     // the x axis position
 
 LineChart::LineChart(QQuickPaintedItem *parent) : QQuickPaintedItem(parent)
 {
@@ -42,7 +42,12 @@ void LineChart::paint(QPainter *painter)
     int *copyArray = new int[copyCurrentNumber];
 
     for(int i = 0;i < copyCurrentNumber;++i)
-        copyArray[i] = comPortThread->numberPoint[i];
+    {
+        if(comPortThread->numberPoint[i] < 360)
+            copyArray[i] = comPortThread->numberPoint[i];
+        else
+            copyArray[i] = 0;
+    }
 
    comPortThread->mutex.unlock();
 
@@ -93,16 +98,16 @@ void LineChart::paint(QPainter *painter)
     // paint the words on the picture
     for (int var = 0; var < copyCurrentNumber; ++var)
     {
-        if(var%6 == 0)
+        if(var % 10 == 0)
         {
-        QFont isToday("white",10);
-        painter->setFont(isToday);
-        QString flagstr = "";
-        flagstr = QString::number(copyArray[var]);
-        if(copyArray[var] > 0)
-            painter->drawText((WIDTH+var*2*WIDTH),-copyArray[var]*(ORIGINAL-topDistance)/flag-25, flagstr);
-        else
-            painter->drawText((WIDTH+var*2*WIDTH),-copyArray[var]*(ORIGINAL-topDistance)/flag+25,flagstr);
+            QFont isToday("white",10);
+            painter->setFont(isToday);
+            QString flagstr = "";
+            flagstr = QString::number(copyArray[var]);
+            if(copyArray[var] > 0)
+                painter->drawText((WIDTH+var*2*WIDTH),-copyArray[var]*(ORIGINAL-topDistance)/flag-25, flagstr);
+            else
+                painter->drawText((WIDTH+var*2*WIDTH),-copyArray[var]*(ORIGINAL-topDistance)/flag+25,flagstr);
         }
     }
 

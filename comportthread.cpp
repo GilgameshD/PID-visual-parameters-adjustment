@@ -1,26 +1,28 @@
 #include "comportthread.h"
 #include <qdebug.h>
+#include <iomanip>
 
-#define MAX_NUMBER 300
+#define MAX_NUMBER 600
 #define RECEIVE_TIME_INTERVAL 10   // date receive time
 #define MAX_MISSING      1000
 
+
 ComPortThread::ComPortThread()
 {
-    com = new Win_QextSerialPort("COM5",QextSerialBase::EventDriven);
+    com = new Win_QextSerialPort("COM7",QextSerialBase::EventDriven);
     stopped = false;
     currentNumber = 1;
     numberPoint = new int[MAX_NUMBER];
     for(int i = 0;i < MAX_NUMBER;++i)
         numberPoint[i] = 10;
 
-    receive = new char[5];
+    receive = new char[4];
 }
 
 // read data from the port
 bool ComPortThread::readComPort()
 {
-    for(int i = 0;i < 5;++i)      //init data array
+    for(int i = 0;i < 4;++i)      //init data array
             receive[i] = 0x00;
 
     char* temp = new char;
@@ -36,31 +38,37 @@ bool ComPortThread::readComPort()
                     break;
                 }
             }
-            com->read(receive, 5);
+            com->read(receive, 4);
 
-           if (!(receive[3] == 0x0d && receive[4] == 0x0a))
+           if (!(receive[2] == 0x0d && receive[3] == 0x0a))
                return false;
 
-           unsigned int differenceMotor = 0;
-           differenceMotor = receive[0];
-           differenceMotor = (differenceMotor << 8) | receive[1];
+           // char --- 1 byte  short int --- 2 bytes  int --- 4 bytes
+           WORD differenceMotor = 0x00;
+           int showNumber = 0;
+           differenceMotor = receive[1] & 0x00ff;  // clear high 8 bits
+           differenceMotor = (receive[0] << 8) | differenceMotor;
+            if(differenceMotor >> 15 == 0x0001)    // negative number
+            {
+                differenceMotor = ~differenceMotor + 0x0001;
+                showNumber = -differenceMotor;
+            }
+            else
+                 showNumber = differenceMotor;
 
-           int motorSpeedDiffenerce = differenceMotor;
-           int signSpeed;
-           if(receive[2] == 0x00)
-                signSpeed = -motorSpeedDiffenerce;
-           else
-                signSpeed = motorSpeedDiffenerce;
-           //qDebug() << signSpeed << endl;
+           //////// warning ////////
+           // when we print the number, there will be a long time delay
+           //qDebug() << hex <<differenceMotor << endl;
 
            // lock this varaiable to avoid other thread's visiting
            mutex.lock();
            if(currentNumber == 1)
                 numberPoint[0] = 1;
            else
-                numberPoint[currentNumber-1] = signSpeed;
+                numberPoint[currentNumber-1] = showNumber;
            mutex.unlock();
            // lock finished
+           //qDebug() << numberPoint[currentNumber-1] << endl;
            return true;
     }
     return false;
@@ -101,6 +109,8 @@ void ComPortThread::run()
                 currentNumber = 1;
             emit dataUpdated();
         }
-        usleep(5);
+
+        // this parameter will decide the speed of drawing
+        msleep(5);
     }
 }
