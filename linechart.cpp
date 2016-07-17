@@ -10,7 +10,7 @@
 // at the beginning, we update the ui in the onTimer of port, but this will delay the timer,
 // so we build a new thread to receive the data from com port
 
-// 2016.4.29   Author : Wenhao Ding                                                   All Rights Reserved
+// 2016.7.17   Author : Wenhao Ding                                                   All Rights Reserved
 /*********************************************************************************************/
 
 #include "linechart.h"
